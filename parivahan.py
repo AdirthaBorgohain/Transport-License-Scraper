@@ -85,24 +85,37 @@ class_of_vehicle = final_htmlElem.xpath(
 cov_date_of_issue = final_htmlElem.xpath(
     '//*[@id="form_rcdl:j_idt165_data"]/tr/td[3]')[0].text_content()
 
-print(current_status)
-print(name)
-print(date_of_issue)
-print(last_trans_loc)
-print(nontrans_valid_from)
-print(nontrans_valid_to)
-print(trans_valid_from)
-print(trans_valid_to)
-print(hazard_valid_till)
-print(hill_valid_till)
-print(cov_category)
-print(class_of_vehicle)
-print(cov_date_of_issue)
+# print(current_status)
+# print(name)
+# print(date_of_issue)
+# print(last_trans_loc)
+# print(nontrans_valid_from)
+# print(nontrans_valid_to)
+# print(trans_valid_from)
+# print(trans_valid_to)
+# print(hazard_valid_till)
+# print(hill_valid_till)
+# print(cov_category)
+# print(class_of_vehicle)
+# print(cov_date_of_issue)
 
-# saveDict = {
-#     "Holder's Name": name,
-#     "lastTransac": lastTransac
-# }
+detailsDict = {
+    "Current Status": current_status,
+    "Holder's Name": name,
+    "Date Of Issue": date_of_issue,
+    "Last Transaction At": last_trans_loc,
+    "(NON TRANSPORT) Valid From": nontrans_valid_from,
+    "(NON TRANSPORT) Valid Till": nontrans_valid_to,
+    "(TRANSPORT) Valid From": trans_valid_from,
+    "(TRANSPORT) Valid Till": trans_valid_to,
+    "(HAZARD) Valid Till": hazard_valid_till,
+    "(HILL) Valid Till": hill_valid_till,
+    "COV Category": cov_category,
+    "Class Of Vehicle": class_of_vehicle,
+    "COV Date Of Issue": cov_date_of_issue
+}
 
-# with open("adi.json", "w") as fp:
-#     json.dump(saveDict, fp)
+with open("Details.json", "w") as fp:
+    json.dump(detailsDict, fp)
+
+print("Details Successfully Stored to JSON File")
