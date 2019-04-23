@@ -22,9 +22,6 @@ while(flag == 0):
     htmlElem = html.document_fromstring(sourceCode)
     test = htmlElem.xpath(
         '//*[@id="j_id1:javax.faces.ViewState:0"]')[0].attrib['value']                                      # get value of unique token for each session
-    # print(test)
-    # while(flag==0){}
-    # try{}
     captcha = htmlElem.xpath(
         '//*[@id="form_rcdl:j_idt33:j_idt39"]')[0].get('src')
     captcha_url = 'https://parivahan.gov.in' + captcha
@@ -55,9 +52,15 @@ while(flag == 0):
     prefix1 = '//*[@id="form_rcdl:j_idt122"]'
     prefix2 = '//*[@id="form_rcdl:j_idt165_data"]/tr'
 
-    if len(final_htmlElem.xpath(prefix1 + '/div[1]/text()')) == 0:
-        print("Error in Captcha. Retrying.")
+ 
+
+    if len(final_htmlElem.xpath('//*[@id="form_rcdl:j_idt14"]/div/ul/li/span[2]/text()')) != 0:
+        print("Error while submitting captcha. Retrying")
         continue
+    
+    elif len(final_htmlElem.xpath(prefix1 + '/div[1]/text()')) == 0:
+        print("Error in details entered. Exiting")
+        break
 
     current_status = final_htmlElem.xpath(
         prefix1 + '/table[1]/tr[1]/td[2]')[0].text_content()
@@ -97,20 +100,6 @@ while(flag == 0):
 
     cov_date_of_issue = final_htmlElem.xpath(
         prefix2 + '/td[3]')[0].text_content()
-
-    # print(current_status)
-    # print(name)
-    # print(date_of_issue)
-    # print(last_trans_loc)
-    # print(nontrans_valid_from)
-    # print(nontrans_valid_to)
-    # print(trans_valid_from)
-    # print(trans_valid_to)
-    # print(hazard_valid_till)
-    # print(hill_valid_till)
-    # print(cov_category)
-    # print(class_of_vehicle)
-    # print(cov_date_of_issue)
 
     detailsDict = {
         "Current Status": current_status,
