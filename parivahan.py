@@ -2,15 +2,16 @@ import requests
 import json
 from lxml import html
 
-
+# dummy function for extracting text from captcha image
 def get_captcha():
     captcha_manual = input("Enter Captcha (captcha_image.png): ")
     return captcha_manual
 
-
+# keeps track of errors
 flag = 0
 
 while(flag == 0):
+    # start new session
     session_requests = requests.session()
 
     link = 'https://parivahan.gov.in/rcdlstatus/?pur_cd=101'
@@ -20,8 +21,10 @@ while(flag == 0):
     sourceCode = response.content
     # make HTML element object
     htmlElem = html.document_fromstring(sourceCode)
-    test = htmlElem.xpath(
-        '//*[@id="j_id1:javax.faces.ViewState:0"]')[0].attrib['value']                                      # get value of unique token for each session
+    # get value of unique token for each session
+    token = htmlElem.xpath(
+        '//*[@id="j_id1:javax.faces.ViewState:0"]')[0].attrib['value']
+    # download captcha image                                      
     captcha = htmlElem.xpath(
         '//*[@id="form_rcdl:j_idt33:j_idt39"]')[0].get('src')
     captcha_url = 'https://parivahan.gov.in' + captcha
@@ -29,6 +32,7 @@ while(flag == 0):
     with open("captcha_image.png", 'wb') as f:
         f.write(image_response.content)
 
+    # data to be entered into the form
     payload = {
         "javax.faces.partial.ajax": "true",
         "javax.faces.source: form_rcdl": "j_idt44",
@@ -39,9 +43,10 @@ while(flag == 0):
         "form_rcdl:tf_dlNO": "DL-0420110149646",
         "form_rcdl:tf_dob_input": "09-02-1976",
         "form_rcdl:j_idt33:CaptchaID": get_captcha(),
-        "javax.faces.ViewState": test
+        "javax.faces.ViewState": token
     }
 
+    # post form data
     final = session_requests.post(
         'https://parivahan.gov.in/rcdlstatus/vahan/rcDlHome.xhtml', data=payload)
 
@@ -49,19 +54,21 @@ while(flag == 0):
 
     final_htmlElem = html.document_fromstring(final_source_code)
 
+    # common prefixes of xpaths to be used
     prefix1 = '//*[@id="form_rcdl:j_idt122"]'
     prefix2 = '//*[@id="form_rcdl:j_idt165_data"]/tr'
 
- 
-
+    # check if error occured while submitting captcha
     if len(final_htmlElem.xpath('//*[@id="form_rcdl:j_idt14"]/div/ul/li/span[2]/text()')) != 0:
         print("Error while submitting captcha. Retrying")
         continue
     
+    # check if error occured while submitting details
     elif len(final_htmlElem.xpath(prefix1 + '/div[1]/text()')) == 0:
-        print("Error in details entered. Exiting")
+        print("Error in entered details. Exiting")
         break
 
+    # extract all required details
     current_status = final_htmlElem.xpath(
         prefix1 + '/table[1]/tr[1]/td[2]')[0].text_content()
 
@@ -101,6 +108,7 @@ while(flag == 0):
     cov_date_of_issue = final_htmlElem.xpath(
         prefix2 + '/td[3]')[0].text_content()
 
+    # construct dictionary of requried details
     detailsDict = {
         "Current Status": current_status,
         "Holder's Name": name,
@@ -117,6 +125,7 @@ while(flag == 0):
         "COV Date Of Issue": cov_date_of_issue
     }
 
+    # write dictionary to json file
     with open("Details.json", "w") as fp:
         json.dump(detailsDict, fp)
 
