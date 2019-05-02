@@ -55,11 +55,12 @@ while(flag == 0):
     final_htmlElem = html.document_fromstring(final_source_code)
 
     # common prefixes of xpaths to be used
-    prefix1 = '//*[@id="form_rcdl:j_idt122"]'
-    prefix2 = '//*[@id="form_rcdl:j_idt165_data"]/tr'
+    prefix1 = '//*[@id="form_rcdl:j_idt123"]'
+    prefix2 = '//*[@id="form_rcdl:j_idt166_data"]/tr'
 
     # check if error occured while submitting captcha
-    if len(final_htmlElem.xpath('//*[@id="form_rcdl:j_idt14"]/div/ul/li/span[2]/text()')) != 0:
+    
+    if len(final_htmlElem.xpath('//*[@id="form_rcdl:j_idt14"]/div/ul/li/span[1]/text()')) != 0:
         print("Error while submitting captcha. Retrying")
         continue
     
